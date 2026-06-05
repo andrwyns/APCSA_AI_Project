@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FLIPMAXX | Demo Arcade</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="fx-layer" class="fx-layer" aria-hidden="true"></div>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Primary navigation">
+        <a class="brand" href="#home" data-screen="home" aria-label="FLIPMAX home">
+          <span class="brand-mark">🎮</span>
+          <span>
+            <strong>FLIPMAXX</strong>
+            <small>Demo arcade</small>
+          </span>
+        </a>
+
+        <nav class="nav-stack">
+          <button class="nav-button active" type="button" data-screen="home">
+            <span class="nav-icon">🏠</span>
+            Home
+          </button>
+          <button class="nav-button" type="button" data-screen="mines">
+            <span class="nav-icon">💎</span>
+            Mines
+          </button>
+          <button class="nav-button" type="button" data-screen="roulette">
+            <span class="nav-icon">🎞️</span>
+            Roulette
+          </button>
+          <button class="nav-button" type="button" data-screen="rocket">
+            <span class="nav-icon">🚀</span>
+            Rocket Multiplier
+          </button>
+          <button class="nav-button" type="button" data-screen="plinko">
+            <span class="nav-icon">🟠</span>
+            Plinko
+          </button>
+          <button class="nav-button" type="button" data-screen="towers">
+            <span class="nav-icon">🏰</span>
+            Towers
+          </button>
+        </nav>
+
+        <div class="sidebar-note">
+          <span class="status-dot"></span>
+          Demo mode only. No real money, login, deposits, withdrawals, or payments.
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Play balance</p>
+            <h1>Demo balance</h1>
+          </div>
+          <div class="balance-card" aria-live="polite">
+            <span>Balance</span>
+            <strong id="balance">$10,000.00</strong>
+          </div>
+        </header>
+
+        <section class="screen active" id="home" aria-labelledby="home-title">
+          <div class="hero">
+            <div class="hero-copy">
+              <p class="eyebrow">FLIPMAXX arcade</p>
+              <h2 id="home-title">Dark casino-style games in demo mode.</h2>
+              <p>
+                Jump between Mines, Roulette, Rocket Multiplier, Plinko, and Towers using a
+                practice balance. No accounts, purchases, or payment flows are included.
+              </p>
+              <div class="hero-actions" aria-label="Game shortcuts">
+                <button class="primary-action" type="button" data-screen="mines">Open Mines</button>
+                <button class="secondary-action" type="button" data-screen="roulette">Open Roulette</button>
+              </div>
+            </div>
+
+            <div class="stat-grid" aria-label="Demo account details">
+              <article class="stat-tile">
+                <span>Mode</span>
+                <strong>Demo</strong>
+              </article>
+              <article class="stat-tile">
+                <span>Wallet</span>
+                <strong>Demo</strong>
+              </article>
+              <article class="stat-tile">
+                <span>Games</span>
+                <strong>5</strong>
+              </article>
+              <article class="stat-tile">
+                <span>Payments</span>
+                <strong>None</strong>
+              </article>
+            </div>
+          </div>
+
+          <div class="game-grid" aria-label="Available games">
+            <article class="game-card" data-screen-card="mines">
+              <div class="card-top">
+                <span class="game-symbol mines-symbol">💎</span>
+                <span class="pill">Grid risk</span>
+              </div>
+              <h3>Mines</h3>
+              <p>Pick safe tiles on a 5x5 board with 3 hidden mines, then cash out.</p>
+              <button type="button" data-screen="mines">View</button>
+            </article>
+
+            <article class="game-card" data-screen-card="roulette">
+              <div class="card-top">
+                <span class="game-symbol roulette-symbol">🎞️</span>
+                <span class="pill">Reel</span>
+              </div>
+              <h3>Roulette</h3>
+              <p>Pick red, black, or green and watch the neon reel spin.</p>
+              <button type="button" data-screen="roulette">View</button>
+            </article>
+
+            <article class="game-card" data-screen-card="rocket">
+              <div class="card-top">
+                <span class="game-symbol rocket-symbol">🚀</span>
+                <span class="pill">Multiplier</span>
+              </div>
+              <h3>Rocket Multiplier</h3>
+              <p>Launch the rocket, watch the multiplier climb, and cash out before the crash.</p>
+              <button type="button" data-screen="rocket">View</button>
+            </article>
+
+            <article class="game-card" data-screen-card="plinko">
+              <div class="card-top">
+                <span class="game-symbol plinko-symbol">🟠</span>
+                <span class="pill">Drop</span>
+              </div>
+              <h3>Plinko</h3>
+              <p>Drop chips through pegs and land in multiplier buckets.</p>
+              <button type="button" data-screen="plinko">View</button>
+            </article>
+
+            <article class="game-card" data-screen-card="towers">
+              <div class="card-top">
+                <span class="game-symbol towers-symbol">🏰</span>
+                <span class="pill">Climb</span>
+              </div>
+              <h3>Towers</h3>
+              <p>Pick a safe tile on each row, climb the tower, and cash out before a miss.</p>
+              <button type="button" data-screen="towers">View</button>
+            </article>
+          </div>
+        </section>
+
+        <section class="screen" id="mines" aria-labelledby="mines-title">
+          <div class="section-heading">
+            <div>
+              <p id="mines-heading" class="eyebrow">3 hidden mines</p>
+              <h2 id="mines-title">Mines</h2>
+            </div>
+            <button class="secondary-action" type="button" data-screen="home">Back Home</button>
+          </div>
+          <div class="placeholder-layout">
+            <div class="control-panel">
+              <label>
+                Bet amount
+                <input id="mines-bet" type="number" min="1" step="1" value="100" />
+              </label>
+              <label>
+                Mines
+                <input id="mines-count" type="number" min="1" max="24" step="1" value="3" />
+              </label>
+              <div class="game-readout">
+                <span>Safe picks</span>
+                <strong id="mines-safe-count">0</strong>
+              </div>
+              <div class="game-readout">
+                <span>Current multiplier</span>
+                <strong id="mines-multiplier">1.00x</strong>
+              </div>
+              <div class="game-readout">
+                <span>Possible payout</span>
+                <strong id="mines-payout">$0.00</strong>
+              </div>
+              <button id="mines-start" class="primary-action" type="button">Start Round</button>
+              <button id="mines-cashout" class="secondary-action" type="button" disabled>Cash Out</button>
+              <p id="mines-message" class="game-message">
+                Start a round, avoid the 3 mines, and cash out anytime after a safe tile.
+              </p>
+            </div>
+            <div id="mines-board" class="mines-board" aria-label="Mines board"></div>
+          </div>
+        </section>
+
+        <section class="screen" id="roulette" aria-labelledby="roulette-title">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Red 2x, Black 2x, Green 14x</p>
+              <h2 id="roulette-title">Roulette</h2>
+            </div>
+            <button class="secondary-action" type="button" data-screen="home">Back Home</button>
+          </div>
+          <div class="roulette-game-layout">
+            <div class="roulette-table" aria-hidden="true">
+              <div class="roulette-pointer"></div>
+              <div class="roulette-window">
+                <div class="roulette-reel" id="roulette-wheel"></div>
+              </div>
+              <div class="roulette-result" id="roulette-result">?</div>
+            </div>
+            <div class="control-panel roulette-controls">
+              <label>
+                Bet amount
+                <input id="roulette-bet" type="number" min="1" step="1" value="250" />
+              </label>
+              <div class="bet-row" aria-label="Roulette bet choices">
+                <button class="bet-chip red selected" type="button" data-roulette-choice="red">Red</button>
+                <button class="bet-chip black" type="button" data-roulette-choice="black">Black</button>
+                <button class="bet-chip green" type="button" data-roulette-choice="green">Green</button>
+              </div>
+              <div class="game-readout">
+                <span>Selected bet</span>
+                <strong id="roulette-choice">Red</strong>
+              </div>
+              <button id="roulette-spin" class="primary-action" type="button">Spin Wheel</button>
+              <p id="roulette-message" class="game-message">
+                Choose a color, spin, and the balance updates after the result.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="screen" id="rocket" aria-labelledby="rocket-title">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Cash out before crash</p>
+              <h2 id="rocket-title">Rocket Multiplier</h2>
+            </div>
+            <button class="secondary-action" type="button" data-screen="home">Back Home</button>
+          </div>
+          <div class="rocket-game-layout">
+            <div class="rocket-stage" aria-label="Rocket multiplier graph">
+              <div class="rocket-stars"></div>
+              <div class="rocket-score">
+                <strong id="rocket-live">1.00x</strong>
+                <span>Current payout</span>
+              </div>
+              <div class="rocket-skyline" aria-hidden="true"></div>
+              <div class="rocket-path" id="rocket-path"></div>
+              <div class="rocket" id="rocket-ship">🚀</div>
+            </div>
+            <div class="control-panel rocket-controls">
+              <label>
+                Bet amount
+                <input id="rocket-bet" type="number" min="1" step="1" value="150" />
+              </label>
+              <div class="game-readout">
+                <span>Live multiplier</span>
+                <strong id="rocket-panel-multiplier">1.00x</strong>
+              </div>
+              <div class="game-readout">
+                <span>Potential payout</span>
+                <strong id="rocket-win-preview">$0.00</strong>
+              </div>
+              <button id="rocket-start" class="primary-action" type="button">Launch Rocket</button>
+              <button id="rocket-cashout" class="secondary-action" type="button" disabled>Cash Out</button>
+              <p class="rule-note">Rule: the hidden crash point is chosen when the round starts. Cashing out before that point pays bet times the live multiplier.</p>
+              <p id="rocket-message" class="game-message">
+                Start the rocket. Cash out before the hidden crash point to win bet times multiplier.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="screen" id="plinko" aria-labelledby="plinko-title">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Drop to multiplier buckets</p>
+              <h2 id="plinko-title">Plinko</h2>
+            </div>
+            <button class="secondary-action" type="button" data-screen="home">Back Home</button>
+          </div>
+          <div class="plinko-layout">
+            <div class="plinko-stage" aria-label="Plinko board">
+              <button class="help-button" type="button" aria-label="Plinko help">?</button>
+              <div id="plinko-pegs" class="plinko-pegs"></div>
+              <div id="plinko-balls" class="plinko-balls"></div>
+              <div id="plinko-buckets" class="plinko-buckets"></div>
+            </div>
+            <div class="control-panel plinko-controls">
+              <label>
+                Bet amount
+                <input id="plinko-bet" type="number" min="1" step="1" value="100" />
+              </label>
+              <div class="bet-row" aria-label="Plinko difficulty">
+                <button class="bet-chip selected" type="button" data-plinko-difficulty="easy">Easy</button>
+                <button class="bet-chip" type="button" data-plinko-difficulty="normal">Normal</button>
+                <button class="bet-chip" type="button" data-plinko-difficulty="hard">Hard</button>
+              </div>
+              <div class="game-readout">
+                <span>Last multiplier</span>
+                <strong id="plinko-last">-</strong>
+              </div>
+              <button id="plinko-drop" class="primary-action" type="button">Drop Chip</button>
+              <p id="plinko-message" class="game-message">
+                Drop balls through the pegs. Each landing bucket decides the payout multiplier.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="screen" id="towers" aria-labelledby="towers-title">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">One safe tile per row</p>
+              <h2 id="towers-title">Towers</h2>
+            </div>
+            <button class="secondary-action" type="button" data-screen="home">Back Home</button>
+          </div>
+          <div class="placeholder-layout">
+            <div class="control-panel">
+              <label>
+                Bet amount
+                <input id="towers-bet" type="number" min="1" step="1" value="100" />
+              </label>
+              <div class="bet-row" aria-label="Towers difficulty">
+                <button class="bet-chip selected" type="button" data-towers-difficulty="easy">Easy</button>
+                <button class="bet-chip" type="button" data-towers-difficulty="normal">Normal</button>
+                <button class="bet-chip" type="button" data-towers-difficulty="hard">Hard</button>
+              </div>
+              <div class="game-readout">
+                <span>Current level</span>
+                <strong id="towers-level">0</strong>
+              </div>
+              <div class="game-readout">
+                <span>Potential payout</span>
+                <strong id="towers-payout">$0.00</strong>
+              </div>
+              <button id="towers-start" class="primary-action" type="button">Start New Game</button>
+              <button id="towers-cashout" class="secondary-action" type="button" disabled>Cash Out</button>
+              <p id="towers-message" class="game-message">
+                Start a tower. Pick one tile on the active row and cash out before a miss.
+              </p>
+            </div>
+            <div class="towers-stage">
+              <button class="help-button" type="button" aria-label="Towers help">?</button>
+              <div id="towers-board" class="towers-board" aria-label="Towers board"></div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
