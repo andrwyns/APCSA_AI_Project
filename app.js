@@ -21,6 +21,8 @@ const ROULETTE_SLOTS = [
   "black",
 ];
 const ROULETTE_SEGMENT_WIDTH = 93;
+const ROULETTE_RENDER_LOOPS = 16;
+const ROULETTE_RESET_LOOP = 6;
 const ROCKET_TICK_MS = 100;
 const PLINKO_ROWS = 12;
 const PLINKO_MAX_BALLS = 15;
@@ -42,11 +44,22 @@ const PLINKO_BUCKET_LEFT = 8;
 const PLINKO_BUCKET_WIDTH = 84;
 const MINES_REWARD_FACTOR = 0.68;
 const TOWERS_ROWS = 8;
-const TOWERS_COLUMNS = 3;
-const TOWERS_DIFFICULTIES = {
-  easy: 1.34,
-  normal: 1.52,
-  hard: 1.78,
+const TOWERS_MODES = {
+  easy: {
+    columns: 5,
+    badPicks: 2,
+    multiplier: 1.32,
+  },
+  normal: {
+    columns: 3,
+    badPicks: 1,
+    multiplier: 1.52,
+  },
+  hard: {
+    columns: 3,
+    badPicks: 2,
+    multiplier: 2.15,
+  },
 };
 const WIN_IMAGES = [
   "images/e65e836859ab6c998e6eddab8657df02-tiger-illustration-face-chinese.png.webp",
@@ -129,7 +142,7 @@ let towersRound = {
   active: false,
   bet: 0,
   level: 0,
-  safeColumns: [],
+  badColumns: [],
 };
 let fxSequence = 0;
 
@@ -200,10 +213,41 @@ function formatUsd(amount) {
 function updateBalance(amount) {
   balance = Math.max(0, amount);
   balanceElement.textContent = formatUsd(balance);
+  syncBetInputsToBalance();
+}
+
+function clampBetInputToBalance(input) {
+  const value = Math.floor(Number(input.value));
+  const maxBet = Math.floor(balance);
+
+  if (!Number.isFinite(value)) {
+    return Number.NaN;
+  }
+
+  if (value > maxBet) {
+    input.value = String(maxBet);
+    return maxBet;
+  }
+
+  return value;
 }
 
 function readBet(input) {
-  return Math.floor(Number(input.value));
+  return clampBetInputToBalance(input);
+}
+
+function syncBetInputsToBalance() {
+  [
+    minesBetInput,
+    rouletteBetInput,
+    rocketBetInput,
+    plinkoBetInput,
+    towersBetInput,
+  ].forEach((input) => {
+    if (input) {
+      clampBetInputToBalance(input);
+    }
+  });
 }
 
 function clamp(value, min, max) {
@@ -717,10 +761,25 @@ function cashOutMines() {
   setMessage(minesMessage, `Cashed out at ${multiplier.toFixed(2)}x for ${formatUsd(payout)}.`, "win");
 }
 
+function setRouletteReelOffset(offset, animate = true) {
+  rouletteWheel.style.transition = animate ? "" : "none";
+  rouletteReelOffset = offset;
+  rouletteWheel.style.transform = `translateX(${rouletteReelOffset}px)`;
+
+  if (!animate) {
+    void rouletteWheel.offsetHeight;
+    rouletteWheel.style.transition = "";
+  }
+}
+
+function getRouletteOffset(loop, slotIndex) {
+  return -((loop * ROULETTE_SLOTS.length + slotIndex) * ROULETTE_SEGMENT_WIDTH + ROULETTE_SEGMENT_WIDTH / 2);
+}
+
 function createRouletteBoard() {
   rouletteWheel.innerHTML = "";
 
-  Array.from({ length: 8 }).forEach(() => {
+  Array.from({ length: ROULETTE_RENDER_LOOPS }).forEach(() => {
     ROULETTE_SLOTS.forEach((color) => {
       const slot = document.createElement("span");
 
@@ -728,6 +787,8 @@ function createRouletteBoard() {
       rouletteWheel.append(slot);
     });
   });
+
+  setRouletteReelOffset(getRouletteOffset(ROULETTE_RESET_LOOP, 0), false);
 }
 
 function setRouletteChoice(choice) {
@@ -765,12 +826,9 @@ function spinRoulette() {
   setMessage(rouletteMessage, "Reel spinning...", "");
 
   const result = getRouletteResult();
-  const loopWidth = ROULETTE_SLOTS.length * ROULETTE_SEGMENT_WIDTH;
-  const baseLoops = Math.ceil((Math.abs(rouletteReelOffset) + loopWidth * 3) / loopWidth);
-  const targetIndex = ROULETTE_SLOTS.length * baseLoops + result.index;
+  const targetLoop = ROULETTE_RESET_LOOP + 5 + Math.floor(Math.random() * 3);
 
-  rouletteReelOffset = -(targetIndex * ROULETTE_SEGMENT_WIDTH + ROULETTE_SEGMENT_WIDTH / 2);
-  rouletteWheel.style.transform = `translateX(${rouletteReelOffset}px)`;
+  setRouletteReelOffset(getRouletteOffset(targetLoop, result.index));
 
   window.setTimeout(() => {
     const won = result.color === rouletteChoice;
@@ -788,6 +846,7 @@ function spinRoulette() {
       setMessage(rouletteMessage, `${result.color.toUpperCase()} hit. You lost ${formatUsd(bet)}.`, "loss");
     }
 
+    setRouletteReelOffset(getRouletteOffset(ROULETTE_RESET_LOOP, result.index), false);
     rouletteSpinning = false;
     rouletteSpinButton.disabled = false;
   }, 2700);
@@ -1104,7 +1163,7 @@ function setPlinkoDifficulty(difficulty) {
 }
 
 function getTowersMultiplier(level) {
-  return Math.pow(TOWERS_DIFFICULTIES[towersDifficulty], level);
+  return Math.pow(TOWERS_MODES[towersDifficulty].multiplier, level);
 }
 
 function updateTowersReadout() {
@@ -1116,9 +1175,10 @@ function updateTowersReadout() {
 
 function createTowersBoard() {
   towersBoard.innerHTML = "";
+  towersBoard.style.setProperty("--tower-columns", String(TOWERS_MODES[towersDifficulty].columns));
 
   for (let row = TOWERS_ROWS - 1; row >= 0; row -= 1) {
-    for (let col = 0; col < TOWERS_COLUMNS; col += 1) {
+    for (let col = 0; col < TOWERS_MODES[towersDifficulty].columns; col += 1) {
       const tile = document.createElement("button");
       tile.className = "tower-tile";
       tile.type = "button";
@@ -1140,6 +1200,7 @@ function setTowersDifficulty(difficulty) {
   towersDifficultyButtons.forEach((button) => {
     button.classList.toggle("selected", button.dataset.towersDifficulty === difficulty);
   });
+  createTowersBoard();
   updateTowersReadout();
 }
 
@@ -1156,7 +1217,7 @@ function startTowersRound() {
     active: true,
     bet,
     level: 0,
-    safeColumns: Array.from({ length: TOWERS_ROWS }, () => Math.floor(Math.random() * TOWERS_COLUMNS)),
+    badColumns: Array.from({ length: TOWERS_ROWS }, () => randomUniqueIndexes(TOWERS_MODES[towersDifficulty].badPicks, TOWERS_MODES[towersDifficulty].columns)),
   };
 
   createTowersBoard();
@@ -1166,7 +1227,7 @@ function startTowersRound() {
   towersDifficultyButtons.forEach((button) => {
     button.disabled = true;
   });
-  setMessage(towersMessage, "Tower started. Pick one tile on the glowing active row.", "");
+  setMessage(towersMessage, `Tower started. ${TOWERS_MODES[towersDifficulty].badPicks} bad pick${TOWERS_MODES[towersDifficulty].badPicks === 1 ? "" : "s"} per row.`, "");
   markActiveTowerRow();
 }
 
@@ -1184,12 +1245,16 @@ function revealTowerRound(hitTile = null) {
     const col = Number(tile.dataset.col);
     tile.disabled = true;
 
-    if (towersRound.safeColumns[row] === col) {
-      tile.classList.add("safe");
-      tile.textContent = "💎";
-    } else if (tile === hitTile) {
+    if (towersRound.badColumns[row].has(col)) {
       tile.classList.add("miss");
       tile.textContent = "💥";
+    } else {
+      tile.classList.add("safe");
+      tile.textContent = "💎";
+    }
+
+    if (tile === hitTile) {
+      tile.classList.add("hit");
     }
   });
 }
@@ -1208,7 +1273,7 @@ function pickTowerTile(row, col, tile) {
     return;
   }
 
-  if (towersRound.safeColumns[row] !== col) {
+  if (towersRound.badColumns[row].has(col)) {
     tile.classList.add("miss");
     tile.textContent = "💥";
     revealTowerRound(tile);
@@ -1260,6 +1325,18 @@ screenButtons.forEach((button) => {
   button.addEventListener("click", (event) => {
     event.preventDefault();
     showScreen(button.dataset.screen);
+  });
+});
+
+[
+  minesBetInput,
+  rouletteBetInput,
+  rocketBetInput,
+  plinkoBetInput,
+  towersBetInput,
+].forEach((input) => {
+  input.addEventListener("input", () => {
+    clampBetInputToBalance(input);
   });
 });
 

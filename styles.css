@@ -2386,9 +2386,9 @@ input {
 
 .towers-board {
   display: grid;
-  grid-template-columns: repeat(3, minmax(5rem, 1fr));
+  grid-template-columns: repeat(var(--tower-columns, 3), minmax(4.2rem, 1fr));
   gap: 1rem;
-  width: min(42rem, 76%);
+  width: min(48rem, 82%);
   padding: 2rem;
   border-radius: 1rem;
   background: rgba(18, 23, 53, 0.42);
